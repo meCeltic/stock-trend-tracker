@@ -1,0 +1,42 @@
+# Spring Boot Configuration
+spring:
+  # Database Configuration
+  datasource:
+    url: jdbc:h2:mem:stockdb
+    driver-class-name: org.h2.Driver
+    username: sa
+    password: password
+  
+  # JPA Configuration
+  jpa:
+    database-platform: org.hibernate.dialect.H2Dialect
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+  
+  # H2 Console Configuration
+  h2:
+    console:
+      enabled: true
+      path: /h2-console
+  
+  # Server Configuration
+  server:
+    compression:
+      enabled: true
+      mime-types: text/html,text/xml,text/plain,text/css,text/javascript,application/javascript,application/json,application/xml
+      min-response-size: 1024
+
+# Springdoc OpenAPI Configuration
+springdoc:
+  api-docs:
+    path: /api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    enabled: true
+
+# Application Configuration
+logging:
+  level:
+    com.stock: DEBUG
+    org.springframework.web: DEBUG
