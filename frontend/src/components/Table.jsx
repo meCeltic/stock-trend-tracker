@@ -7,6 +7,9 @@ const Table = ({
   onRowClick = null,
   emptyMessage = 'No data available'
 }) => {
+  // Coerce data to array to prevent crashes from undefined or non-array data
+  const rows = Array.isArray(data) ? data : [];
+  
   if (loading) {
     return (
       <div className="w-full p-8 text-center">
@@ -16,7 +19,7 @@ const Table = ({
     );
   }
 
-  if (!data || data.length === 0) {
+  if (!rows || rows.length === 0) {
     return (
       <div className="w-full p-8 text-center">
         <p className="text-gray-500">{emptyMessage}</p>
@@ -40,7 +43,7 @@ const Table = ({
           </tr>
         </thead>
         <tbody className="bg-white divide-y divide-gray-200">
-          {data.map((row, rowIndex) => (
+          {rows.map((row, rowIndex) => (
             <tr
               key={row.id || rowIndex}
               onClick={onRowClick ? () => onRowClick(row) : undefined}
