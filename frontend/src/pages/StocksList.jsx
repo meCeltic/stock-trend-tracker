@@ -35,9 +35,13 @@ const StocksList = () => {
         response = await stocksApi.getStocks(page, size);
       }
       
-      setStocks(response.content || response.data || []);
-      setTotalPages(response.totalPages || 0);
-      setTotalElements(response.totalElements || 0);
+      // Normalize API response - handle different response structures
+      const stocksData = response?.content || response?.data || response || [];
+      setStocks(Array.isArray(stocksData) ? stocksData : []);
+      
+      // Safely set pagination data with fallbacks
+      setTotalPages(response?.totalPages || Math.ceil((response?.totalElements || 0) / size) || 0);
+      setTotalElements(response?.totalElements || response?.total || (Array.isArray(stocksData) ? stocksData.length : 0) || 0);
     } catch (error) {
       console.error('Error fetching stocks:', error);
       toast.error('Failed to fetch stocks');
@@ -49,14 +53,19 @@ const StocksList = () => {
   const fetchExchanges = async () => {
     try {
       const response = await stocksApi.getExchanges();
-      setExchanges(response.data || []);
+      // Normalize exchanges response to ensure it's always an array
+      const exchangesData = response?.data || response?.content || response || [];
+      setExchanges(Array.isArray(exchangesData) ? exchangesData : []);
     } catch (error) {
       console.error('Error fetching exchanges:', error);
     }
   };
 
   const handleRowClick = (stock) => {
-    navigate(`/stocks/${stock.id}`);
+    // Guard against undefined stock or missing id
+    if (stock?.id) {
+      navigate(`/stocks/${stock.id}`);
+    }
   };
 
   const handleSearch = (e) => {
