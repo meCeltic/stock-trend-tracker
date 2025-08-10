@@ -1,4 +1,5 @@
 package com.stock.stock_trend_tracker.web;
+
 import com.stock.stock_trend_tracker.domain.Stock;
 import com.stock.stock_trend_tracker.domain.PriceCandle;
 import com.stock.stock_trend_tracker.repository.StockRepository;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -220,6 +222,32 @@ public class StockController {
             public final List<String> availableTimeframes = timeframes;
             public final LocalDateTime createdAt = stock.getCreatedAt();
             public final LocalDateTime updatedAt = stock.getUpdatedAt();
+        });
+    }
+    
+    /**
+     * Trigger manual fetch for a stock symbol
+     * @param symbol Stock symbol to fetch
+     * @return Response indicating fetch trigger status
+     */
+    @PostMapping("/{symbol}/fetch")
+    public ResponseEntity<Object> triggerManualFetch(@PathVariable String symbol) {
+        // Find stock by symbol
+        Optional<Stock> stockOpt = stockRepository.findBySymbolIgnoreCase(symbol);
+        if (!stockOpt.isPresent()) {
+            return ResponseEntity.notFound().build();
+        }
+        
+        Stock stock = stockOpt.get();
+        
+        // TODO: Implement actual fetch logic here
+        // For now, just return a placeholder response indicating the fetch was triggered
+        return ResponseEntity.ok(new Object() {
+            public final String message = "Manual fetch triggered for stock: " + symbol;
+            public final String symbol = stock.getSymbol();
+            public final String name = stock.getName();
+            public final LocalDateTime triggeredAt = LocalDateTime.now();
+            public final String status = "triggered";
         });
     }
 }
