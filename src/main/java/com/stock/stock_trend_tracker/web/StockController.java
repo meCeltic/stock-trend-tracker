@@ -1,18 +1,17 @@
 package com.stock.stock_trend_tracker.web;
-
 import com.stock.stock_trend_tracker.domain.Stock;
 import com.stock.stock_trend_tracker.domain.PriceCandle;
 import com.stock.stock_trend_tracker.repository.StockRepository;
 import com.stock.stock_trend_tracker.repository.PriceCandleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -175,9 +174,9 @@ public class StockController {
         
         Page<PriceCandle> candles;
         if (timeframe != null && !timeframe.isEmpty()) {
-            candles = priceCandleRepository.findByStockAndTimeframe(stock, timeframe)
-                    .stream()
-                    .collect(org.springframework.data.domain.PageImpl::new);
+            List<PriceCandle> list = priceCandleRepository.findByStockAndTimeframe(stock, timeframe);
+            List<PriceCandle> pageContent = list.stream().skip(pageable.getOffset()).limit(pageable.getPageSize()).toList();
+            candles = new PageImpl<>(pageContent, pageable, list.size());
         } else {
             candles = priceCandleRepository.findByStockOrderByTimestampDesc(stock, pageable);
         }
@@ -203,7 +202,7 @@ public class StockController {
      * @return Stock statistics
      */
     @GetMapping("/{id}/stats")
-    public ResponseEntity<?> getStockStats(@PathVariable Long id) {
+    public ResponseEntity<Object> getStockStats(@PathVariable Long id) {
         Optional<Stock> stockOpt = stockRepository.findById(id);
         if (!stockOpt.isPresent()) {
             return ResponseEntity.notFound().build();
