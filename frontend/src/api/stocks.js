@@ -26,7 +26,7 @@ export const stocksApi = {
   // Search stocks
   searchStocks: (query, params = {}) => {
     const queryParams = new URLSearchParams({
-      q: query,
+      query: query,
       page: params.page || 0,
       size: params.size || 20,
       ...params
@@ -71,6 +71,6 @@ export const stocksApi = {
 
   // Get exchanges
   getExchanges: () => {
-    return apiClient.get('/api/stocks/exchanges');
+    return apiClient.get('/stocks/exchanges');
   }
 };
