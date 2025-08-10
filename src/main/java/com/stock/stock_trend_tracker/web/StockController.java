@@ -1,5 +1,4 @@
 package com.stock.stock_trend_tracker.web;
-
 import com.stock.stock_trend_tracker.domain.Stock;
 import com.stock.stock_trend_tracker.domain.PriceCandle;
 import com.stock.stock_trend_tracker.repository.StockRepository;
@@ -13,11 +12,11 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.time.LocalDateTime;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
-
 @RestController
 @RequestMapping("/api/stocks")
 @CrossOrigin(origins = "*")
@@ -231,7 +230,7 @@ public class StockController {
      * @return Response indicating fetch trigger status
      */
     @PostMapping("/{symbol}/fetch")
-    public ResponseEntity<Object> triggerManualFetch(@PathVariable String symbol) {
+    public ResponseEntity<Map<String, Object>> triggerManualFetch(@PathVariable String symbol) {
         // Find stock by symbol
         Optional<Stock> stockOpt = stockRepository.findBySymbolIgnoreCase(symbol);
         if (!stockOpt.isPresent()) {
@@ -242,12 +241,12 @@ public class StockController {
         
         // TODO: Implement actual fetch logic here
         // For now, just return a placeholder response indicating the fetch was triggered
-        return ResponseEntity.ok(new Object() {
-            public final String message = "Manual fetch triggered for stock: " + symbol;
-            public final String symbol = stock.getSymbol();
-            public final String name = stock.getName();
-            public final LocalDateTime triggeredAt = LocalDateTime.now();
-            public final String status = "triggered";
-        });
+        Map<String, Object> map = new LinkedHashMap<>();
+        map.put("message", "Manual fetch triggered for stock: " + symbol);
+        map.put("symbol", stock.getSymbol());
+        map.put("name", stock.getName());
+        map.put("triggeredAt", LocalDateTime.now());
+        map.put("status", "triggered");
+        return ResponseEntity.ok(map);
     }
 }
