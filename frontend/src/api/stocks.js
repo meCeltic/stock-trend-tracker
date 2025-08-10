@@ -67,5 +67,10 @@ export const stocksApi = {
   // Remove stock from watchlist
   removeFromWatchlist: (stockId, watchlistId) => {
     return apiClient.delete(`/stocks/${stockId}/watchlist/${watchlistId}`);
+  },
+
+  // Get exchanges
+  getExchanges: () => {
+    return apiClient.get('/api/stocks/exchanges');
   }
 };
